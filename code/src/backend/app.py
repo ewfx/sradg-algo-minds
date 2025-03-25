@@ -1,13 +1,13 @@
 from flask import Flask, request, send_from_directory, jsonify
 import pandas as pd
 import os
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from valueFeeder import get_anomaly_exists_options, get_anomaly_type_options  
 
 
 app = Flask(__name__)
 
-CORS(app) 
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Directory for storing files
 UPLOAD_FOLDER = "uploads"
@@ -42,7 +42,7 @@ def upload_file():
         # Add two new columns with default value "ABC"
         df["anomaly_exists"] = get_anomaly_exists_options()
         df["anomaly_type"] = get_anomaly_type_options()
-        df["Comment"] = " fwfwe "
+        df["Comment"] = ""
 
         # Save as CSV (Ensure all saved files are in CSV format)
         modified_filename = f"modified_{filename}.csv"
@@ -90,6 +90,43 @@ def get_data(filename):
     data = df.to_dict(orient="records")  # Convert rows to JSON format
     
     return jsonify(data), 200
+
+@app.route('/update-row', methods=['OPTIONS'])
+@cross_origin(origins="http://localhost:3000", supports_credentials=True)
+def handle_options():
+    """Handle preflight OPTIONS request."""
+    response = jsonify({"message": "Preflight request allowed"})
+    response.status_code = 200
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    return response
+
+
+@app.route('/update-row', methods=['POST'])
+@cross_origin(origins="http://localhost:3000", supports_credentials=True)
+def update_row():
+    data = request.json
+    filename = data["filename"]
+    row_index = data["rowIndex"]
+    row_data = data["rowData"]
+
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    df = pd.read_csv(filepath)
+
+    if row_index >= len(df):
+        return jsonify({"error": "Invalid row index"}), 400
+
+    # Update specific row fields
+    for key, value in row_data.items():
+        df.at[row_index, key] = value
+
+    df.to_csv(filepath, index=False, encoding="utf-8")
+
+    return jsonify({"message": "Row updated successfully"}), 200
+
 
 
 if __name__ == "__main__":
