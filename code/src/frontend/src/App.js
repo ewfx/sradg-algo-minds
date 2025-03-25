@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
+import { anomalyOptions } from "./anomalyTypes";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -42,7 +43,7 @@ function App() {
       const orderedColumns = Object.keys(data[0]).filter(
         (col) => col !== "anomaly_exists" && col !== "anomaly_type"
       );
-      setColumnOrder([...orderedColumns, "anomaly_exists", "anomaly_type"]);
+      setColumnOrder([...orderedColumns, "anomaly_exists", "anomaly_type", "Comment"]);
     }
     setTableData(data);
   };
@@ -113,16 +114,29 @@ function App() {
                   <tr key={rowIndex}>
                     {columnOrder.map((key, colIndex) => (
                       <td key={colIndex}>
-                        {key === "anomaly_exists" || key === "anomaly_type" ? (
-                          <input
-                            type="text"
-                            value={row[key]}
-                            onChange={(e) => handleEdit(rowIndex, key, e.target.value)}
-                          />
-                        ) : (
-                          row[key]
-                        )}
-                      </td>
+                      {key === "anomaly_exists" ? (
+                        <select value={row[key]} onChange={(e) => handleEdit(rowIndex, key, e.target.value)}>
+                          <option value="Match">Match</option>
+                          <option value="Break">Break</option>
+                        </select>
+                      ) : key === "anomaly_type" ? (
+                        <select value={row[key]} onChange={(e) => {
+                          handleEdit(rowIndex, key,  e.target.value);
+                        }}>
+                         {anomalyOptions.map((option, idx) => (
+                            <option key={idx} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      ) : key === "Comment" ? (
+                        <input
+                          type="text"
+                          value={row[key] || ""}
+                          onChange={(e) => handleEdit(rowIndex, key, e.target.value)}
+                        />
+                      ) : (
+                        row[key]
+                      )}
+                    </td>
                     ))}
                     <td>
                       <button className="edit-btn">Edit</button>
