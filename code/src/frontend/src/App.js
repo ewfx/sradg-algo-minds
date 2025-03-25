@@ -8,6 +8,7 @@ function App() {
   const [tableData, setTableData] = useState([]);
   const [columnOrder, setColumnOrder] = useState([]);
   const [isProcessed, setIsProcessed] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
 
   const tableWrapperRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -20,6 +21,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
 
+    //Upload API
     const response = await fetch("http://127.0.0.1:5000/upload", {
       method: "POST",
       body: formData,
@@ -35,13 +37,52 @@ function App() {
     }
   };
 
+  //Update Row Data
+  const handleRowEdit = async (index) => {
+    if (editingRow === index) {
+        // Save the row to the backend
+        await saveRowData(index, tableData[index]);
+
+        // Show success popup
+        alert("Row data saved successfully!");
+
+        setEditingRow(null); // Exit edit mode
+    } else {
+        setEditingRow(index); // Enter edit mode
+    }
+  };
+
+  const saveRowData = async (index, rowData) => {
+    if (!filename) return;
+
+    const response = await fetch("http://127.0.0.1:5000/update-row", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filename, rowIndex: index, rowData }),
+        mode: "cors",  // Ensure cross-origin request handling
+        // credentials: "include",  // Allow cookies if needed
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        alert("Error updating row: " + data.error);
+    }
+  };
+
+
+
+
+  //Fetch Data API
   const fetchData = async (file) => {
     const response = await fetch(`http://127.0.0.1:5000/data/${file}`);
     const data = await response.json();
 
+    //Add 2 new columns in table
     if (data.length > 0) {
       const orderedColumns = Object.keys(data[0]).filter(
-        (col) => col !== "anomaly_exists" && col !== "anomaly_type"
+        (col) => col !== "anomaly_exists" && col !== "anomaly_type" && col!="Comment"
       );
       setColumnOrder([...orderedColumns, "anomaly_exists", "anomaly_type", "Comment"]);
     }
@@ -88,7 +129,11 @@ function App() {
 
   return (
     <div>
-      <header>Anomaly Detector</header>
+       <header>Anomaly Detector
+        <div className="logo_container"  >
+        <img src={ require('./logo.png') } />
+        </div>
+      </header>
 
       <div className="container">
         <input type="file" onChange={handleFileChange} />
@@ -139,7 +184,9 @@ function App() {
                     </td>
                     ))}
                     <td>
-                      <button className="edit-btn">Edit</button>
+                      <button className="edit-btn" onClick={() => handleRowEdit(rowIndex)}>
+                          Save
+                      </button>
                     </td>
                   </tr>
                 ))}
