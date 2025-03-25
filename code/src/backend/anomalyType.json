@@ -1,0 +1,9 @@
+{
+    "anomaly_type_options": 
+    [
+        "Break",
+        "Leak",
+        "Overheat",
+        "Short Circuit"
+    ]
+}
