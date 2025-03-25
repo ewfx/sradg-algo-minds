@@ -82,9 +82,9 @@ function App() {
     //Add 2 new columns in table
     if (data.length > 0) {
       const orderedColumns = Object.keys(data[0]).filter(
-        (col) => col !== "anomaly_exists" && col !== "anomaly_type" && col!="Comment"
+        (col) => col !== "Match Status" && col !== "Anomaly Type" && col!="Comments"
       );
-      setColumnOrder([...orderedColumns, "anomaly_exists", "anomaly_type", "Comment"]);
+      setColumnOrder([...orderedColumns, "Match Status", "Anomaly Type", "Comments"]);
     }
     setTableData(data);
   };
@@ -159,12 +159,12 @@ function App() {
                   <tr key={rowIndex}>
                     {columnOrder.map((key, colIndex) => (
                       <td key={colIndex}>
-                      {key === "anomaly_exists" ? (
+                      {key === "Match Status" ? (
                         <select value={row[key]} onChange={(e) => handleEdit(rowIndex, key, e.target.value)}>
                           <option value="Match">Match</option>
                           <option value="Break">Break</option>
                         </select>
-                      ) : key === "anomaly_type" ? (
+                      ) : key === "Anomaly Type" ? (
                         <select value={row[key]} onChange={(e) => {
                           handleEdit(rowIndex, key,  e.target.value);
                         }}>
@@ -172,7 +172,7 @@ function App() {
                             <option key={idx} value={option}>{option}</option>
                           ))}
                         </select>
-                      ) : key === "Comment" ? (
+                      ) : key === "Comments" ? (
                         <input
                           type="text"
                           value={row[key] || ""}
