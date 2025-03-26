@@ -4,18 +4,17 @@ import os
 from flask_cors import CORS, cross_origin
 from valueFeeder import get_anomaly_exists_options, get_anomaly_type_options  
 
-
 app = Flask(__name__)
-
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
-# Directory for storing files
+
+# File Storage Directory
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
-# API: Upload Excel/CSV, Convert to CSV, Add Columns
+# API 1: Upload Excel/CSV, Convert to CSV, Add Columns
 @app.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
@@ -40,9 +39,9 @@ def upload_file():
             return jsonify({"error": "Unsupported file format"}), 400
 
         # Add two new columns with default value "ABC"
-        df["anomaly_exists"] = get_anomaly_exists_options()
-        df["anomaly_type"] = get_anomaly_type_options()
-        df["Comment"] = ""
+        df["Match Status"] = get_anomaly_exists_options()
+        df["Anomaly Type"] = get_anomaly_type_options()
+        df["Comments"] = " "
 
         # Save as CSV (Ensure all saved files are in CSV format)
         modified_filename = f"modified_{filename}.csv"
@@ -57,7 +56,8 @@ def upload_file():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Store updated data
+
+# API 2: Store updated data
 @app.route('/save-updated-data', methods=['POST'])
 def save_updated_data():
     data = request.json
@@ -71,13 +71,13 @@ def save_updated_data():
 
     return jsonify({"message": "Data saved successfully"}), 200
 
-# API: Download the Modified CSV File
+# API 3: Download the Modified CSV File
 @app.route("/download/<filename>", methods=["GET"])
 def download_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
 
-# API: Get Data as JSON (For React Table)
+# API 4: Get Data as JSON (For React Table)
 @app.route("/data/<filename>", methods=["GET"])
 def get_data(filename):
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -85,7 +85,7 @@ def get_data(filename):
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404
     
-    # ✅ Load CSV & Convert to JSON
+    # Load CSV & Convert to JSON
     df = pd.read_csv(filepath, encoding="utf-8")
     data = df.to_dict(orient="records")  # Convert rows to JSON format
     
@@ -94,7 +94,6 @@ def get_data(filename):
 @app.route('/update-row', methods=['OPTIONS'])
 @cross_origin(origins="http://localhost:3000", supports_credentials=True)
 def handle_options():
-    """Handle preflight OPTIONS request."""
     response = jsonify({"message": "Preflight request allowed"})
     response.status_code = 200
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
@@ -102,6 +101,7 @@ def handle_options():
     return response
 
 
+# API 5: Update Individual Row data
 @app.route('/update-row', methods=['POST'])
 @cross_origin(origins="http://localhost:3000", supports_credentials=True)
 def update_row():
@@ -126,7 +126,6 @@ def update_row():
     df.to_csv(filepath, index=False, encoding="utf-8")
 
     return jsonify({"message": "Row updated successfully"}), 200
-
 
 
 if __name__ == "__main__":
