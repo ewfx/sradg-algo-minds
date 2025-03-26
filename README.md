@@ -4,6 +4,7 @@
 ## 📌 Table of Contents
 - [Introduction](#introduction)
 - [Demo](#demo)
+- [Inspiration](#inspiration)
 - [What It Does](#what-it-does)
 - [How We Built It](#how-we-built-it)
 - [Challenges We Faced](#challenges-we-faced)
@@ -31,8 +32,8 @@ Existing reconciliation tools process vast amounts of transactions but require s
 
 
 ## 🎥 Demo
-📹 [Video Demo](#) (if applicable)  
-
+📹 [Video Demo] 
+[Watch the Anomaly Detection Demo](https://github.com/ewfx/sradg-algo-minds/blob/main/artifacts/demo/Anomaly%20Detection%20Demo.mp4)
 
 
 🖼️ Screenshots:
@@ -53,6 +54,13 @@ User can even add anomaly category by there own
 After all the processing, user can get updated data as excel
 ![image](https://github.com/user-attachments/assets/3087925f-faf5-4487-b3c8-aa5184510e53)
 
+
+
+---
+
+## 💡 Inspiration
+
+Traditional financial reconciliation relies heavily on manual spreadsheets and email exchanges, making the process slow and error-prone. To address this, we developed an AI-driven platform that automates anomaly detection, categorizes mismatches, provides intelligent insights, supports real-time data uploads, and sends instant alerts for anomaly updates.
 
 
 ## ⚙️ What It Does
