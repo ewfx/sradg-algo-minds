@@ -29,15 +29,15 @@ anomaly_type=""
 
 
 def get_anomaly_exists_options(row,flag):
-
-    if abs(row["iHub Balance"]-row["GL Balance"])>0:
-        global data_diff
-        data_diff = abs(row["iHub Balance"]-row["GL Balance"])
-        return anomalyExistsOptions[1]
+    if flag: 
+        if abs(row["ihub balance"]-row["gl balance"])>0:
+            global data_diff
+            data_diff = abs(row["ihub balance"]-row["gl balance"])
+            return anomalyExistsOptions[1]
+        else:
+            return anomalyExistsOptions[0]
     else:
-        return anomalyExistsOptions[0]
-# else:
-#     return anomalyExistsOptions[anomaly_exists()]
+        return anomalyExistsOptions[anomaly_exists()]
 
 def get_anomaly_type_options(row):
     global data_diff

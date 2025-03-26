@@ -12,7 +12,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_file():
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
-
+    column_name = "IHub Balance"
     file = request.files["file"]
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
@@ -29,16 +29,15 @@ def upload_file():
             df = pd.read_csv(filepath, encoding="utf-8")
         else:
             return jsonify({"error": "Unsupported file format"}), 400
-        
-        ihub_balance = df.get("IHub Balance")
-        if ihub_balance is not None:
-            flag=True
-        else:
-            flag=False
-        
+        flag = False
+        df.columns = df.columns.str.lower()
+        if column_name.lower() in df.columns:
+            flag = True
+
+
         for index, row in df.iterrows():
             df.at[index,"Match Status"] = get_anomaly_exists_options(row,flag)
-            
+                
             if(df.at[index,"Match Status"]=="Match"):
                 df.at[index,"Anomaly Type"] = " "
                 df.at[index,"Comments"] = " "
