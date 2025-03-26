@@ -1,0 +1,85 @@
+{
+    "anomalies": [
+      {
+        "category": "Duplicate Transactions",
+        "description": "Same transaction recorded more than once."
+      },
+      {
+        "category": "Missing Transactions",
+        "description": "Transactions present in one record but absent in another."
+      },
+      {
+        "category": "Amount Discrepancies",
+        "description": "Differences in transaction amounts between records."
+      },
+      {
+        "category": "Unauthorized Transactions",
+        "description": "Transactions not approved or recognized by the entity."
+      },
+      {
+        "category": "Date Mismatches",
+        "description": "Inconsistent transaction dates across records."
+      },
+      {
+        "category": "Unbalanced Accounts",
+        "description": "Debits and credits not equaling as expected."
+      },
+      {
+        "category": "Currency Conversion Errors",
+        "description": "Incorrect application of exchange rates."
+      },
+      {
+        "category": "Incorrect Account Postings",
+        "description": "Transactions recorded in wrong accounts."
+      },
+      {
+        "category": "Reversed Transactions",
+        "description": "Transactions that are canceled but not properly recorded."
+      },
+      {
+        "category": "Timing Differences",
+        "description": "Delays causing transactions to appear in different periods."
+      },
+      {
+        "category": "Fraudulent Transactions",
+        "description": "Unauthorized or deceitful activities recorded."
+      },
+      {
+        "category": "Data Entry Errors",
+        "description": "Manual input mistakes leading to inaccuracies."
+      },
+      {
+        "category": "Omitted Transactions",
+        "description": "Legitimate transactions not recorded in the system."
+      },
+      {
+        "category": "System Integration Errors",
+        "description": "Failures in data transfer between systems causing inconsistencies."
+      },
+      {
+        "category": "Policy Violations",
+        "description": "Transactions that do not comply with internal policies."
+      },
+      {
+        "category": "Threshold Breaches",
+        "description": "Transactions exceeding predefined limits."
+      },
+      {
+        "category": "Suspicious Patterns",
+        "description": "Unusual transaction behaviors deviating from norms."
+      },
+      {
+        "category": "Chargeback Anomalies",
+        "description": "Discrepancies in reversed credit card transactions."
+      },
+      {
+        "category": "Vendor Invoice Mismatches",
+        "description": "Differences between vendor invoices and internal purchase records."
+      },
+      {
+        "category": "Bank Fee Errors",
+        "description": "Incorrect or unexpected bank charges not aligning with agreements."
+      }
+    ]
+  }
+  

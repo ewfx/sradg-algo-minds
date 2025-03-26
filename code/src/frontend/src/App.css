@@ -1,15 +1,27 @@
 *{
   margin:0;
 }
+body {
+  font-family: 'Roboto Slab', serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Arvo', serif;
+}
+
 header {
   background: #d32f2f;
   color: white;
-  text-align: center;
-  padding: 15px;
+  padding: 10px;
   font-size: 30px;
   font-weight: bold;
   width:100%;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo_container{
+  margin: 0 15px;
 }
 
 .container {
@@ -103,6 +115,54 @@ th {
   background-color: #45a049;
 }
 
+.edit-btn-email {
+  background-color: #f9b807;
+  color: black;
+  padding: 3px 8px; 
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 12px;
+  width: 80px; 
+  height: 25px; 
+}
+
 .anomaly_type{
   color: black;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.modal-content > input{
+  font-size: 16px;
+  margin: 15px 0;
+  padding:10px;
+}
+
+.button-container{
+  display: inline;
+}
+
+.button-container > button{
+  margin: 10px;
 }

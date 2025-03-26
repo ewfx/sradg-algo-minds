@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { anomalyOptions } from "./anomalyTypes";
+import { anomalyOptions, addAnomalyType } from "./anomalyTypes";
+
 
 function App() {
   const [file, setFile] = useState(null);
@@ -9,11 +10,28 @@ function App() {
   const [columnOrder, setColumnOrder] = useState([]);
   const [isProcessed, setIsProcessed] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+  const [newAnomaly, setNewAnomaly] = useState(""); // State for new anomaly input
+  const [showModal, setShowModal] = useState(false); // State to show modal
+  const [message, setMessage] = useState('');
 
   const tableWrapperRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
+
+  
+    const handleSendMail = async (index) => {
+        try {
+            const response = await fetch("http://127.0.0.1:5000/send-mail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+            const data = await response.json();
+            setMessage(data.message);
+        } catch (error) {
+            setMessage("Error sending email.");
+        }
+    };
 
   const handleUpload = async () => {
     if (!file) return alert("Please select a file");
@@ -92,6 +110,9 @@ function App() {
   const handleEdit = (index, key, value) => {
     const newData = [...tableData];
     newData[index][key] = value;
+    if (key === "Match Status" && value === "Match") {
+      newData[index]["Anomaly Type"] = ""; // Clear dropdown value
+    }
     setTableData(newData);
   };
 
@@ -127,6 +148,19 @@ function App() {
     window.location.href = `http://127.0.0.1:5000/download/${filename}`;
   };
 
+
+  //Handle add new anomaly
+  const handleAddAnomaly = () => {
+    if (newAnomaly.trim() === "") {
+      alert("Anomaly type cannot be empty.");
+      return;
+    }
+    addAnomalyType(newAnomaly);
+    setNewAnomaly("");
+    setShowModal(false); // Close modal after adding
+  };
+
+
   return (
     <div>
        <header>Anomaly Detector
@@ -139,8 +173,29 @@ function App() {
         <input type="file" onChange={handleFileChange} />
         <button onClick={handleUpload}>Upload & Process File</button>
 
-        {isProcessed && <button onClick={handleDownload}>Download File</button>}
+        {isProcessed && (
+          <div className="button-container">
+            <button onClick={handleDownload}>Download File</button>
+            <button onClick={() => setShowModal(true)}>Add New Anomaly Type</button>
+          </div>
+        )}
       </div>
+
+        {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Add New Anomaly Type</h3>
+            <input
+              type="text"
+              value={newAnomaly}
+              onChange={(e) => setNewAnomaly(e.target.value)}
+              placeholder="Enter anomaly type"
+            />
+            <button onClick={handleAddAnomaly}>Add</button>
+            <button onClick={() => setShowModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       {tableData.length > 0 && (
         <>
@@ -166,8 +221,9 @@ function App() {
                         </select>
                       ) : key === "Anomaly Type" ? (
                         <select value={row[key]} onChange={(e) => {
-                          handleEdit(rowIndex, key,  e.target.value);
-                        }}>
+                          handleEdit(rowIndex, key,  e.target.value)}}
+                          disabled={row["Match Status"] == "Match"} 
+                        >
                          {anomalyOptions.map((option, idx) => (
                             <option key={idx} value={option}>{option}</option>
                           ))}
@@ -185,7 +241,10 @@ function App() {
                     ))}
                     <td>
                       <button className="edit-btn" onClick={() => handleRowEdit(rowIndex)}>
-                          Save
+                      {editingRow === rowIndex ? "Save" : "Edit"}
+                      </button >
+                      <button className="edit-btn-email" onClick={() => handleSendMail(rowIndex)} >
+                        Send Mail
                       </button>
                     </td>
                   </tr>
